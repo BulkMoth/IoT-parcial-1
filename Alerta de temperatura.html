@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <script type="text/javascript" src="https://assets.adobedtm.com/d0cc0600946eb3957f703b9fe43c3590597a8c2c/satelliteLib-c70de708e9cd05573175cb144bac6233555f70e5.js" integrity="sha384-FHIghZStVUwH7KBgzTjFuxxk5zPLiKRZ5QIUvFlJYNUc6qZ+SQquvgaixgB9MaIK" crossorigin="anonymous"></script>
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+  <link href='//fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Apps - MATLAB Analysis - ThingSpeak IoT</title>  
+    <meta name="description" content="Apps - MATLAB Analysis on ThingSpeak. ThingSpeak is the open IoT platform with MATLAB analytics.">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="theme-color" content="#ffffff">
+
+  <!-- alt url handling for css link and script tags onerror handler -->
+  <script type="application/javascript">
+    function tryCssAltUrl(linkEl, altUrl) {
+      linkEl.removeAttribute('onerror');  // avoid infinite loop if alt url also error
+      linkEl.href=altUrl;
+    }
+    function tryJsAltUrl(altUrl, integrity) {
+      const script=document.createElement('script');
+      script.src=altUrl;
+      if (integrity) {
+        script.integrity=integrity;
+        script.crossOrigin='anonymous';
+      }
+      document.head.appendChild(script);
+    }
+  </script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous" onerror="tryCssAltUrl(this,&#39;/bootstrap@5.2.2/dist/css/bootstrap.min.css&#39;);">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous" onerror="tryCssAltUrl(this,&#39;/font-awesome-4.7.0/css/font-awesome.min.css&#39;);">
+  <link rel="stylesheet" href="/assets/bootstrap_overrides-0e984f58dd8a3e797ba20e5519bba926c5e0c8a2005f489c266494759dbe506e.css" data-turbolinks-track="reload" media="screen" />
+  <link rel="stylesheet" href="/assets/application-c5de5de47f3a82eff6beafbb33fa1753f81217daf451c2b22c36253abf8b9072.css" data-turbolinks-track="reload" media="screen" />
+
+  <script src="/assets/jquery-a3700c90d2826f7657df0dd91127a4fc6130d3c6e65eb2ab450a04a56b9040bd.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous" onerror="tryJsAltUrl(&#39;/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js&#39;,&#39;sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3&#39;);"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.25.3/js/jquery.tablesorter.combined.min.js" integrity="sha384-cfN+2tMN63B5BOlY4cbvyOdOpp2v+DGGmz1ZxHfGNNq0uPIFdS4R53iurgbTOgLu" crossorigin="anonymous"></script>
+  <script src="/assets/application-2dc44ae2690c91d6068664aa7d9bef0de9d73b34c35c99a874bd35763a88fd46.js" data-turbolinks-track="reload"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js" integrity="sha384-CUdYwYFu8WmBI8h257c5rCd1GQX0KL+zSYV6kyRNY2thW7QqQymKGfTCI1WHwzvy" crossorigin="anonymous"></script>
+
+  <meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="99v9yC8MFY_hM6Bs5uMyzc15omPF6nkL5njADsC0-6aPWbww8XS1NFAhAFhoXisMyGfwa1ATAhkZ_xl756jzTg" />
+
+  
+  <!-- Qualaroo for thingspeak.com -->
+  <script src="/assets/ts_qualaroo_loader-36e56e29a01d4ad7a1ada41d2aef3275308d3a3644040a01e12139d34997bd00.js" defer="defer"></script>
+  <!-- Set default mwa_SID cookie on any page visit !-->
+  <script src="/assets/sso_cookie_check-f8b1eba42d88a4157f9a740517d7ffad64cfb3d599f76006804a1ba21eccaa35.js" defer="defer"></script>
+  
+  
+</head>
+
+  
+  <body>
+    <div id="wrap">
+      <nav class="navbar fixed-top navbar-expand-lg ts-navbar mb-4">
+  <div class="container">
+    <div class="navbar-brand">
+      <a href="/">
+        <img style="padding: 0 8px; margin-top: 7px;" id="nav-thingspeak-logo" data-turbolinks="false" src="/assets/thingspeak_logo_white-ef4990033a96773df16f2a98e7d72e06f1f497d026145ebbcce1aa9d974e9015.png" width="200" height="35" />
+</a>    </div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent" data-turbolinks="false">
+      <ul class="navbar-nav ms-auto mb-lg-0 d-lg-none d-xl-none sign-in-nav">
+          <li class="dropdown">
+    <a href="#" title="Antonio" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown" data-bs-toggle="dropdown" id="nav-account">
+      <div class="sign-in-display d-inline">
+        <img class="user-image" onerror="this.src=&#39;/assets/ico-header-account-active-a8b7d1aca3b339fa3ab2e532f542108ebc26f8e6c0cfd66e1b550bc088a6ad98.svg&#39;;" src="https://www.mathworks.com/matlabcentral/profiles/36881994_1739827504457_DEF.jpg" width="25" height="25" />
+      </div>
+      <div class="d-inline">
+        <span class="sign-in-display sign-in-name">Antonio<b class="caret"></b></span>
+      </div>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-account">
+      <li><a id="nav-my-account" data-turbolinks="false" class="dropdown-item" href="/account">My Account</a></li>
+      <li><a id="nav-edit-account" data-turbolinks="false" class="dropdown-item" href="/account/profile">My Profile</a></li>
+      <li><a id="nav-sign-out" data-turbolinks="false" onclick="setSIDCookie()" class="dropdown-item" href="/logout">Sign Out</a></li>
+    </ul>
+  </li>
+
+      </ul>
+      <ul class="navbar-nav me-auto mb-lg-0">
+          <li class="dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="nav-channels" data-bs-toggle="dropdown" aria-expanded="false">
+              Channels <strong class="caret"></strong>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="nav-channels">
+              <li><a id="nav-my-channels" class="dropdown-item" href="/channels">My Channels</a></li>
+              <li><a id="nav-public-channels" class="dropdown-item" href="/image_channels">My Image Channels</a></li>
+              <li><a id="nav-watched-channels" class="dropdown-item" href="/channels/watched">Watched Channels</a></li>
+              <li><a id="nav-public-channels" class="dropdown-item" href="/channels/public">Public Channels</a></li>
+            </ul>
+          </li>
+          <li class="active dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="nav-apps">Apps <b class="caret"></b></a>
+            <ul class="dropdown-menu" aria-labelledby="nav-apps">
+              <li><a id="nav-apps-all" class="dropdown-item" href="/apps">All Apps</a></li>
+                <li><a id="nav-matlab-analysis-app" class="dropdown-item" href="/apps/matlab_analyses">MATLAB Analysis</a></li>
+                <li><a id="nav-matlab-visualizations-app" class="dropdown-item" href="/apps/matlab_visualizations">MATLAB Visualizations</a></li>
+              <li><a id="nav-plugins-app" class="dropdown-item" href="/apps/plugins">Plugins</a></li>
+              <li><a id="nav-timecontrols-app" class="dropdown-item" href="/apps/timecontrols">TimeControl</a></li>
+              <li><a id="nav-react-app" class="dropdown-item" href="/apps/reacts">React</a></li>
+              <li><a id="nav-talkback-app" class="dropdown-item" href="/apps/talkbacks">TalkBack</a></li>
+              <li><a id="nav-thinghttp-app" class="dropdown-item" href="/apps/thinghttp">ThingHTTP</a></li>
+            </ul>
+          </li>
+          <li class="active dropdown">
+            <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-expanded="false" id="nav-mqtt">Devices<strong class="caret"></strong></a>
+            <ul class="dropdown-menu" aria-labelledby="nav-mqtt">
+              <li><a class="dropdown-item" href="/devices/mqtt">MQTT</a></li>
+            </ul>
+          </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-expanded="false" id="nav-support">Support<b class="caret"></b></a>
+          <ul class="dropdown-menu" aria-labelledby="nav-support">
+            <li><a href="https://www.mathworks.com/help/thingspeak/" target="_blank" rel="noopener noreferrer" id="nav-support-doc" class="dropdown-item">Documentation</a></li>
+            <li><a href="https://www.mathworks.com/help/thingspeak/getting-started-with-thingspeak.html" target="_blank" rel="noopener noreferrer" id="nav-support-tutorials" class="dropdown-item">Tutorials</a></li>
+            <li><a href="https://www.mathworks.com/help/thingspeak/examples.html" target="_blank" rel="noopener noreferrer" id="nav-support-examples" class="dropdown-item">Examples</a></li>
+            <li><a href="https://www.mathworks.com/matlabcentral/topics/thingspeak.html" target="_blank" rel="noopener noreferrer" id="nav-support-forum" class="dropdown-item">Community Support</a></li>
+          </ul>
+        </li>
+      </ul>
+      <div class="ms-auto d-sm-none d-md-block">
+        <ul class="navbar-nav me-auto">
+          <span class="navbar-nav d-none d-lg-block">
+            <li class="dropdown"><a id="commercial-learn-more-nav" class="nav-link" href="/pages/commercial_learn_more">Commercial Use</a></li>
+          </span>
+          <li class="dropdown"><a id="nav-sign-in" class="nav-link" href="/prices">How to Buy</a></li>
+          <div class="d-none d-lg-block user-nav">
+              <li class="dropdown">
+    <a href="#" title="Antonio" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown" data-bs-toggle="dropdown" id="nav-account">
+      <div class="sign-in-display d-inline">
+        <img class="user-image" onerror="this.src=&#39;/assets/ico-header-account-active-a8b7d1aca3b339fa3ab2e532f542108ebc26f8e6c0cfd66e1b550bc088a6ad98.svg&#39;;" src="https://www.mathworks.com/matlabcentral/profiles/36881994_1739827504457_DEF.jpg" width="25" height="25" />
+      </div>
+      <div class="d-inline">
+        <span class="sign-in-display sign-in-name">Antonio<b class="caret"></b></span>
+      </div>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-account">
+      <li><a id="nav-my-account" data-turbolinks="false" class="dropdown-item" href="/account">My Account</a></li>
+      <li><a id="nav-edit-account" data-turbolinks="false" class="dropdown-item" href="/account/profile">My Profile</a></li>
+      <li><a id="nav-sign-out" data-turbolinks="false" onclick="setSIDCookie()" class="dropdown-item" href="/logout">Sign Out</a></li>
+    </ul>
+  </li>
+
+          </div>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+<link rel="stylesheet" href="/assets/navbar-9724aa5cdf901f82ab3a017d62a62bc4581eba9578e9919df8e83826c7fbc0d5.css" data-turbolinks-track="reload" media="screen" />
+
+      <div class="container">
+        
+            <script>
+//<![CDATA[
+let is_local_env = false
+//]]>
+</script>
+
+<script src="https://login.mathworks.com/embedded-login/js/dotcom_embedded_status.js"></script>
+<script>
+try {
+  MWEmbeddedStatus.initialize({
+    clientString: "TSPK", 
+    embeddedEndpoint: "https://login.mathworks.com/embedded-login/",
+    logout: function(){
+      window.location.href = "/logout";
+    },
+    synced: function(){
+      redirectToEmbeddedLogin();
+    },
+    handle3PCookieDisabled: function(){
+      redirectToEmbeddedLogin();
+    }
+  });
+
+  MWEmbeddedStatus.prototype.logout = function(){
+    if (is_local_env){
+      document.cookie = "mwa_SID=;path=/";
+    }
+    else {
+      document.cookie = "mwa_SID=;path=/;secure";
+    }
+    MWEmbeddedStatus.instance.config.logout();
+  };
+
+  // to enable SSO in local development and test environments
+  if (is_local_env){
+    MWEmbeddedStatus.prototype.redirectToSSO = function(tx){
+      var port = window.location.port === "" ? "" : ":"+ window.location.port;
+      window.location.href = window.location.protocol + "//" + location.hostname + port + "/login/mwa-sso?uri=" + encodeURIComponent(window.location.href) + "&tx_id=" + tx;
+    };
+  }
+} catch (error) {
+  // pages with links that don't have turbolinks disabled won't load the SSO Status API,
+  // or for browsers that don't allow 3p cookies by default, render embedded login form
+  if (typeof MWEmbeddedStatus === "undefined"){
+    window.location.replace("/login" + "?skipSSOCheck=true");
+  }
+}
+
+function redirectToEmbeddedLogin(){
+  let skipSSOCheckPath = "/login/mwa-sso/check";
+  // redirect the user to embedded login page if a synced event is received and the current pathname points to /login/mwa-sso/check
+  if (window.location.pathname === skipSSOCheckPath) {
+    window.location.replace("/login" + "?skipSSOCheck=true"); 
+  }
+}
+</script>
+
+        <div id="analysis_name_empty_error" class="alert alert-danger alert-dismissable" style="display:none; clear:both">
+  <span id="analysis_name_empty_error_close" class="dismiss"><i class="fa fa-close"></i></span>
+  <span>
+    Analysis name is empty. Enter name before saving MATLAB Analysis.
+  </span>
+</div>
+
+<div id="matlab_code_empty_warning" class="alert alert-danger alert-dismissable" style="display:none; clear:both">
+  <span id="matlab_code_empty_warning_close" class="dismiss"><i class="fa fa-close"></i></span>
+  <span>
+    MATLAB code is empty. Enter code before running or saving MATLAB analysis.
+  </span>
+</div>
+
+<div id="root" class="row">
+  <div class="col-sm-12 col-md-8">
+
+    <div class="custom-breadcrumb">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a id="analysis_breadcrumb_apps_link" href="/apps">Apps</a></li>
+          <li class="breadcrumb-item"><a id="analysis_breadcrumb_analysis_link" href="/apps/matlab_analyses">MATLAB Analysis</a></li>
+          <li class="breadcrumb-item"><a id="analysis_breadcrumb_analysis_name_link" href="#">Alerta temperatura</a></li>
+          <li class="breadcrumb-item active" id="breadcrumb_analysis_code_name">Edit</li>
+        </ol>
+      </nav>
+    </div>
+    
+    <!-- css files for editor , the '_thingspeak' files are extra css files added to maintain styling of the parent page -->
+<link rel="stylesheet" href="/assets/motw_components_thingspeak-e2d35172583154ccbdc47b66f0118dbc9ae4914507fb49985bdf6ca2f0884f6a.css" media="screen" />
+<link rel="stylesheet" href="/richeditor-converter-1.12.0-19a/css-rtc/mw_font.css" media="screen" />
+<link rel="stylesheet" href="/assets/mw_font_thingspeak-a272c9ea999b25da1a5e1bdb4028f920f49ff32c25c9e925303d477c353e4d79.css" media="screen" />
+
+<input type="hidden" name="unsaved_changes" id="unsaved_changes" value="You have unsaved changes that will be lost." autocomplete="off" />
+<input type="hidden" name="success_title" id="success_title" value="MATLAB code ran successfully." autocomplete="off" />
+<input type="hidden" name="error_title" id="error_title" value="MATLAB code contains an error." autocomplete="off" />
+<input type="hidden" name="timeout_title" id="timeout_title" value="MATLAB code has timed out." autocomplete="off" />
+<input type="hidden" name="timeout_detailed" id="timeout_detailed" value="MATLAB code has not completed execution within the allocated time.
+Consider optimizing your MATLAB code to execute within the available time limit." autocomplete="off" />
+<input type="hidden" name="error_message" id="error_message" autocomplete="off" />
+<input type="hidden" name="errored" id="errored" value="false" autocomplete="off" />
+<input type="hidden" name="errored_timecontrol_react" id="errored_timecontrol_react" value="Associated TimeControls and Reacts will not run until the error is fixed." autocomplete="off" />
+
+<form class="edit_matlab_code" id="edit_matlab_code_362797" action="/apps/matlab_analyses/362797" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><input type="hidden" name="_method" value="patch" autocomplete="off" />
+  <input autocomplete="off" type="hidden" value="readChannelID = 2844615; 
+readAPIKey = &#39;CLU0SBY48XEJKS1O&#39;; 
+writeAPIKey = &#39;I15QW8COVA2DECM7&#39;; 
+fieldID = 1; 
+
+% Leer el último dato de temperatura
+lastTemperature = thingSpeakRead(readChannelID, &#39;Fields&#39;, fieldID, &#39;NumPoints&#39;, 1, &#39;ReadKey&#39;, readAPIKey);
+
+% Verificar si la temperatura es mayor a 35°C
+if lastTemperature &gt; 35
+    % Guardar alerta en Field2
+    thingSpeakWrite(readChannelID, &#39;Fields&#39;, 2, &#39;Values&#39;, 1, &#39;WriteKey&#39;, writeAPIKey);
+    fprintf(&#39;⚠️ Alerta: Temperatura alta (%.2f °C)\n&#39;, lastTemperature);
+else
+    thingSpeakWrite(readChannelID, &#39;Fields&#39;, 2, &#39;Values&#39;, 0, &#39;WriteKey&#39;, writeAPIKey);
+    fprintf(&#39;✅ Temperatura normal: %.2f °C\n&#39;, lastTemperature);
+end
+
+
+
+
+" name="matlab_code[mcode]" id="matlab_code_mcode" />
+
+  <div class="mb-3">
+    <label class="col-form-label">Name</label>
+    <input class="form-control" id="analysis_text_field" type="text" value="Alerta temperatura" name="matlab_code[name]" />
+  </div>
+
+  <!-- MATLAB Code Editor div-->
+  <div class="mb-3">
+    <label class="col-form-label">MATLAB Code</label>
+      <div class="lti_editor lti_editor_sm add_border" style="height: 300px;">
+        <div id='matlab_editor' class="windowPane editorWindow">
+          <img class="editorSpinner" id="editorSpinner" src="/assets/loader-transparent-10d4bf629c8a97ca233fc8342ef4d5e547b22b8b99c4071b0651b77d5b326637.gif" />
+          <div class="rtcWrapper">
+            <div data-dojo-attach-point="solutionBodyArea" id="solutionBodyArea"></div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+
+  <div class="mb-3">
+    <input type="submit" name="commit" value="Save and Run" class="btn btn-primary save-Button" id="commit" />
+    <button name="save" type="submit" id="save" class="btn btn-primary save-Button" value="submitted" style="width:100px">
+        <span id="saveRequired">Save<span id="saveNeeded"> </span></span>
+</button>  </div>
+
+  <div class="mb-3">
+    <label class="col-form-label"></label>
+    <div id="results_container">
+      <div id="eval_container">
+      <div class="card">
+        <div class="card-header" id="eval_response" href="#eval_card" aria-expanded="true" aria-controls="eval_card">
+          <b>Output</b>
+        </div>
+        <div class="card-body eval_history" id="eval">
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+   
+  <div class="mb-3">
+    <button type="button" id="clear" class="btn btn-default">Clear Output</button>
+  </div>
+
+</form>
+<div class="mb-3" id="schedule_section_card">
+    <div class="card-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="card">
+            <div class="card-header" id="schedule" href="#" aria-expanded="true" aria-controls="eval_card">
+              <b>Schedule Actions</b>
+            </div>
+            <div id="schedule_card" aria-labelledby="schedule_chevron">
+              <div class="card-body">
+                <div class="row">
+                  <div class="mb-3">
+                    <form id="set_error_email" action="/apps/matlab_analyses/362797/set_error_email" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><input type="hidden" name="authenticity_token" value="dAbmjn1NGsuLtmORBYKXiwYhyKESkFrmskY0ptkZZnAMhKd2ozW6cDqkw6WLP45KAz-aqYdpIfRNwe3T_gVumA" autocomplete="off" />
+                      <input type="checkbox" name="on_error_email" id="on_error_email" value="true" onclick="$(&#39;#set_error_email&#39;).submit();" checked="checked" />
+                      <b>Notify me via email if this MATLAB Analysis fails when triggered by TimeControl or React.</b>
+</form>                  </div>
+                  <div id="schedule_section">
+                    <hr class="mt-1 mb-1"/>
+
+<div class="row mb-1 mt-1">
+  <div class="col-md-4 col-sm-8">
+    <i class="fa fa-link"></i>
+      <a class="link" id="schedule_actions_time_control_link" rel="nofollow" data-method="post" href="/apps/timecontrols/set_session_values?schedulable_id=362797&amp;schedulable_type=MatlabCode">TimeControl</a>
+  </div>
+</div>
+
+<div class="row mb-1 mt-1">
+  <div class="col-12">
+      Schedule your saved code to run at a specified time
+  </div>
+</div>
+
+<hr class="mt-1 mb-1"/>
+
+<div class="row mb-1 mt-1">
+  <div class="col-md-4 col-12">
+    <i class="fa fa-link"></i>
+      <a class="link" id="schedule_actions_react_link" rel="nofollow" data-method="post" href="/apps/reacts/set_session_values?actionable_id=362797&amp;actionable_type=MatlabCode">React</a>
+  </div>
+</div>
+
+<div class="row mb-1 mt-1">
+  <div class="col-12">
+      Trigger a reaction when data in your channel changes.
+  </div>
+</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/analysis-c23fba73877b3e539a28788f546f217511f4dbd3bdd6d7e0b78a03f50b9eeaf3.js"></script>
+<script>
+//<![CDATA[
+var saveType
+//]]>
+</script>
+<!-- js files for editor -->
+<script src="/assets/editor-0570441779231594f8cc861e96111cc35a310205a2321c4c9f02e4f600f6a20f.js"></script>
+<script src="/richeditor-converter-1.12.0-19a/dojoConfig/dojoConfig.js"></script>
+<script src="/richeditor-converter-1.12.0-19a/dojo/dojo.js"></script>
+
+    <h3>Delete MATLAB Code?</h3>
+    <form class="button_to" method="post" action="/apps/matlab_analyses/362797"><input type="hidden" name="_method" value="delete" autocomplete="off" /><input data-confirm="Are you sure you want to delete this MATLAB Analysis?" class="btn btn-danger" id="delete_matlab_code" type="submit" value="Delete" /><input type="hidden" name="authenticity_token" value="y145Z9I1fmbRPsXYbtmp11x773ftkD0x9Rokdq_RBHmz3HifDE3e3WAsZezgZLAWWWW9f3hpRiMKnf0DiM0MkQ" autocomplete="off" /></form>
+    <br>
+  </div>
+
+  <div id="sidebar" class="col-sm-12 col-md-4">
+  <h4 class="custom-breadcrumb">Help</h4>
+
+  <div class="col-pad">
+
+    <ul class="nav nav-tabs mb-3" role="tablist" id="help_tabs">
+      <li class="nav-item">
+        <a class="nav-link active" aria-controls="channels" role="tab" data-bs-toggle="tab" href="#channels">My Channels</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " aria-controls="doc" role="tab" data-bs-toggle="tab" href="#doc">Documentation</a>
+      </li>
+    </ul>
+
+
+    <div class="tab-content">
+
+       <div role="tabpanel" class="tab-pane active" id="channels">
+
+        <a class="btn btn-sm btn-primary mb-3" data-turbolinks="false" id="help_new_channel" href="/channels/new_and_back">New Channel</a>
+
+          <table class="table table-bordered table-striped" id='analyses-channels-help-table'>
+            <thead>
+              <tr class="table-header">
+                <th id='analyses-channel-info'>Most recent channels</th>
+              </tr>
+            </thead>
+              <tr>
+                <td>
+                  Name: <a target="new" id="analyses-channel-info" href="/channels/2844615/private_show">Tarea </a><br>
+                  Channel ID: 2844615<br>
+                  Access: Public<br>
+                  <!-- Channels may not have a read key (previously not created or user deleted) -->
+                    Read API Key: <code id='analyses-read-api-key'>CLU0SBY48XEJKS1O</code><br>
+                  Write API Key: <code id='analyses-write-api-key'>I15QW8COVA2DECM7</code><br>
+                  Fields:<br>
+                      &nbsp; &nbsp; &nbsp; 1: Field Label 1
+                      <br>
+
+
+
+
+
+
+
+
+                </td>
+              </tr>
+          </table>
+
+</div>
+
+      <div>
+  <div class="card mb-1">
+    <div class="card-header" id="headingOne">
+      <h4 class="card-title" id="analyze">
+        <a data-bs-toggle="collapse" href="#collapseOne" aria-controls="collapseOne" class="collapsed">
+          <i class="fa fa-chevron-right"></i>
+          Analyze Data
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse doc-collapse" role="tabpanel" aria-labelledby="headingOne">
+      <div class="card-body">
+        <h2 id="ml_an_settings">MATLAB® Analysis Settings</h2>
+  <ul>
+    <li><strong>Name</strong>: Enter a name for your analysis.</li>
+    <li><strong>MATLAB Code</strong>: Enter custom code, or modify the sample code with your data.</li>
+    <li><strong>Run and Save</strong>: Click to execute and save the code.</li>
+    <li><strong>Output</strong>: This field displays the output of your code. Use it to debug and modify the code.</li>
+    <li><strong>Clear</strong>: Click to clear the code output.</li>
+    <li><strong>Schedule Actions</strong>: Select an action to schedule using this MATLAB code.
+      <ul>
+        <li>Check this box to receive email notifications: Notify me via email if this MATLAB Analysis fails when triggered by TimeControl or React.</li>
+        <li>Click <a target="_blank" href="/apps/timecontrols">TimeControl</a> to schedule your code to run at specified times.</li>
+        <li>Click <a target="_blank" href="/apps/reacts">React</a> to schedule your code to run when channel data meets a predefined condition.</li>
+      </ul>
+    </li>
+    <li><strong>Delete</strong>: Click to delete the analysis.</li>
+    <li><strong>My Channels</strong>: Click this tab to see information about your saved channels, including:
+        <ul>
+          <li>Channel name</li>
+          <li>Channel ID</li>
+          <li>Write and Read API Keys</li>
+          <li>Channel fields</li>
+        </ul>
+    </li>
+    <li><strong>Documentation</strong>: Click this tab for help using the MATLAB Analysis app.</li>
+    <li><strong>New Channel</strong>: Click to create a new channel to hold the values of your analyzed data.</li>
+  </ul>
+
+      </div>
+    </div>
+  </div>
+  
+  <div class="card mb-1">
+    <div class="card-header" id="headingTwo">
+      <h4 class="card-title" id="thingspeakread">
+        <a data-bs-toggle="collapse" href="#collapseTwo" aria-controls="collapseTwo" class="collapsed">
+          <i class="fa fa-chevron-right"></i>
+          thingSpeakRead
+        </a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse doc-collapse" role="tabpanel" aria-labelledby="headingTwo">
+      <div class="card-body">
+        <h1 id="thingSpeakRead">thingSpeakRead</h1>
+  <p>Read data stored in ThingSpeak channel</p>
+
+  <h2>Syntax</h2>
+  <pre>[data,timestamps,chInfo] = thingSpeakRead(chId)<br>[data,timestamps,chInfo] = thingSpeakRead(chId,Name,Value)</pre>
+
+  <a itemprop="url" href="https://www.mathworks.com/help/thingspeak/thingspeakread.html" target="_blank" rel="noopener noreferrer"><span itemprop="name">Learn More</span></a>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-1">
+    <div class="card-header" id="headingThree">
+      <h4 class="card-title" id="thingspeakwrite">
+        <a data-bs-toggle="collapse" href="#collapseThree" aria-controls="collapseThree" class="collapsed">
+          <i class="fa fa-chevron-right"></i>
+          thingSpeakWrite
+        </a>
+      </h4>
+    </div>
+    <div id="collapseThree" class="panel-collapse collapse doc-collapse" role="tabpanel" aria-labelledby="headingThree">
+      <div class="card-body">
+        <h1 id="thingSpeakWrite">thingSpeakWrite</h1><!-- SYNCHTO: _buwxlw_-1.html -->
+  <p itemprop="purpose">Write data to a ThingSpeak channel</p>
+
+  <h2 id="syntax">Syntax</h2>
+    <pre>thingSpeakWrite(chId,data,'WriteKey',writekey)<br>thingSpeakWrite(chId,data,'WriteKey',writekey,Name,Value)</pre>
+
+  <a itemprop="url" href="https://www.mathworks.com/help/thingspeak/thingspeakwrite.html" target="_blank" rel="noopener noreferrer"><span itemprop="name">Learn More</span></a>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-1">
+    <div class="card-header" id="headingFour">
+      <h4 class="card-title" id="urlfilter">
+        <a data-bs-toggle="collapse" href="#collapseFour" aria-controls="collapseFour" class="collapsed">
+          <i class="fa fa-chevron-right"></i>
+          urlfilter
+        </a>
+      </h4>
+    </div>
+    <div id="collapseFour" class="panel-collapse collapse doc-collapse" role="tabpanel" aria-labelledby="headingFour">
+      <div class="card-body">
+        <h1  id="urlfilter">urlfilter</h1>
+  <p itemprop="purpose">Scrape one or more numbers from web page</p>
+
+  <h2 id="syntax">Syntax</h2>
+    <pre>num = urlfilter(URL,target,numNumbers,direction)</pre>
+
+  <a itemprop="url" href="https://www.mathworks.com/help/thingspeak/urlfilter.html" target="_blank" rel="noopener noreferrer"><span itemprop="name">Learn More</span></a>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // when the document is ready
+  $(document).ready( function() {
+    
+    // when the doc is hidden, change chevron state
+    $('.doc-collapse').on('hide.bs.collapse', function () {
+      var id = $(this).attr('id');
+      $('a[href$="#' + id + '"]').find('.fa').addClass('fa-chevron-right').removeClass('fa-chevron-down');
+    })
+
+    // when the doc is shown, change chevron state
+    $('.doc-collapse').on('show.bs.collapse', function () {
+      var id = $(this).attr('id');
+      $('a[href$="#' + id + '"]').find('.fa').addClass('fa-chevron-down').removeClass('fa-chevron-right');
+    })
+
+  });
+</script>
+
+    </div>
+
+  </div>
+</div>
+
+</div>
+<script src="/assets/htmlUtils-e0123513218182b592fad424cd73a0fbdb891a8a4835d1cbe84f9000fa127370.js"></script>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+var cookieBanner = {
+  /* Hide the cookie banner if it was accepted in the last year */
+  showIfNotAccepted: function(){
+    if ( localStorage ) {
+      lastCookieNotificationAcceptedDate = parseInt(localStorage.getItem('tspk-cookie-banner'));
+      /* 31536000000 is the number of milliseconds since 365 days ago */
+      if (  isNaN(lastCookieNotificationAcceptedDate) || ( lastCookieNotificationAcceptedDate < ((new Date).getTime() - 31536000000) ) ){
+        $("#cookie-banner").show();
+      } else {
+        $("#cookie-banner").hide();
+      }
+    }
+  },
+  /* Store time when the cookie notification was accepted in the browser local storage for this site */
+  setAcceptanceTime: function() {
+    if ( localStorage ) {
+      localStorage.setItem('tspk-cookie-banner',(new Date).getTime());
+      cookieBanner.showIfNotAccepted();
+    }
+  }
+};
+</script>
+
+<div id="cookie-banner" class="cookie-alert-warning">
+  <script type="text/javascript">cookieBanner.showIfNotAccepted();</script>
+  <div id="cookie-icon" class="text-end"><span class="fa fa-exclamation-triangle"></span></div>
+  <div id="cookie-text"><p>This website uses cookies to improve your user experience, personalize content and ads, and analyze website traffic. By continuing to use this website, you consent to our use of cookies. Please see our <a target="_blank" rel="noopener noreferrer" style="font-size: small" href="https://www.mathworks.com/company/aboutus/policies_statements.html">Privacy Policy</a> to learn more about cookies and how to change your settings.</p></div>
+  <div id="cookie-remove"><span class="fa fa-times" onclick="cookieBanner.setAcceptanceTime();return false;"></span></div>
+</div>
+    <div id="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-7">
+        <span class="d-none d-md-block d-flex text-md-center justify-content-md-center">
+          <a href="https://blogs.mathworks.com/iot/" title="IoT Blog" target="_blank" rel="noopener noreferrer">Blog</a> |
+          <a href="https://www.mathworks.com/help/thingspeak/" title="ThingSpeak Documentation" target="_blank" rel="noopener noreferrer">Documentation</a> |
+          <a href="https://www.mathworks.com/help/thingspeak/getting-started-with-thingspeak.html" title="ThingSpeak Tutorials" target="_blank" rel="noopener noreferrer">Tutorials</a> |
+          <a target="_blank" rel="noopener noreferrer" href="https://www.mathworks.com/company/aboutus/policies_statements/online-services-agreement.html">Terms</a> |
+          <a target="_blank" rel="noopener noreferrer" href="https://www.mathworks.com/company/aboutus/policies_statements.html">Privacy Policy</a>
+        </span>
+      </div>
+      <div class="col-12 col-md-5">
+        <span class="d-flex text-center justify-content-center text-md-end justify-content-md-end">
+          <a alt="Facebook" target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/thingspeak"><img src="/assets/ico-facebook-864217e7723b63bd8687c81e99e677c0a1efba1db6282794f4077f3d6d5cae86.svg" width="16" height="16" /></a>
+          <a alt="Twitter" target="_blank" rel="noopener noreferrer" href="https://twitter.com/thingspeak"><img src="/assets/ico-twitter-502ca920ad71f398928c9ec00203b98655f8b1ba821b95f4cf11b4eef72b6d4b.svg" width="16" height="16" /></a>
+          <a alt="RSS" target="_blank" rel="noopener noreferrer" href="http://feeds.feedburner.com/internetofthings"><img src="/assets/ico-rss-349a27d6441a574f9218ee6e808d147dc5566204c79d967cf90b33b0bd026171.svg" width="16" height="16" /></a>
+          &emsp;&copy; 2025 <a href="https://www.mathworks.com/" target="_blank" rel="noopener noreferrer">The MathWorks, Inc.</a>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="modal fade" tabindex="-1" role="dialog" id="confirmation-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Confirm</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-sm btn-default" type="button" data-bs-dismiss="modal">Cancel</button>
+        <button id="confirmation-modal-ok" class="btn btn-sm btn-primary" type="button" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+    <script type="text/javascript">_satellite.pageBottom();</script>
+  </body>
+</html>
